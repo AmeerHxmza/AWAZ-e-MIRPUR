@@ -32,7 +32,7 @@ export default function AdminDashboard() {
     <div className="space-y-10">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-200 pb-6">
         <div>
-          <p className="label-caps mb-2">MirpurAwaz · Admin</p>
+          <p className="label-caps mb-2">AWAZ-e-MIRPUR · Admin Command Center</p>
           <h1 className="text-2xl sm:text-3xl font-semibold text-stone-900">System overview</h1>
           <p className="text-sm text-stone-600 mt-2 max-w-xl">
             Volume and status distribution across all filed reports.

@@ -31,7 +31,7 @@ def run(
 
     admin_inbox = _strip_wrappers(os.getenv("ADMIN_NOTIFY_EMAIL", ""))
     id_line = f"Report ID: {complaint_id}\n" if complaint_id is not None else ""
-    subject = f"[MirpurAwaz] Routed report #{complaint_id}" if complaint_id is not None else "[MirpurAwaz] Routed report"
+    subject = f"[AWAZ-e-MIRPUR] Routed report #{complaint_id}" if complaint_id is not None else "[AWAZ-e-MIRPUR] Routed report"
     body = (
         f"{id_line}"
         f"Submitter: {submitter_name or '(unknown)'} <{user_email or '(none)'}>\n"

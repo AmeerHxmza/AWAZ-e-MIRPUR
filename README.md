@@ -1,12 +1,12 @@
-# MirpurAwaz (میرپور آواز) 🏛️
-### AI-Powered Multi-Agent Civic Reporting & Governance Platform for Mirpur City, AJK
+# AWAZ-e-MIRPUR (آوازِ میرپور) 🏛️
+### Autonomous Multi-Agent Civic Governance & Public Reporting Platform for Mirpur City, AJK
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js_16-black.svg?style=flat&logo=next.js)](https://nextjs.org/)
 [![OpenAI](https://img.shields.io/badge/AI-GPT--4o--mini_%7C_Whisper-412991.svg?style=flat&logo=openai)](https://openai.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**MirpurAwaz** is an autonomous AI-driven civic reporting and public municipal engagement platform built specifically for **Mirpur City, Azad Jammu & Kashmir (AJK)**. Aligned with **UN Sustainable Development Goals (SDG 6: Clean Water and Sanitation & SDG 11: Sustainable Cities and Communities)**, MirpurAwaz empowers citizens to report civic crises—such as water supply shortages, damaged roads, sewage blockages, and waste dumping—either by **typing in Urdu/English** or simply recording a **native Urdu voice note** directly in their browser.
+**AWAZ-e-MIRPUR (آوازِ میرپور)** is an autonomous AI-driven civic reporting and municipal governance platform built specifically for **Mirpur City, Azad Jammu & Kashmir (AJK)**. Aligned with **UN Sustainable Development Goals (SDG 6: Clean Water and Sanitation & SDG 11: Sustainable Cities and Communities)**, AWAZ-e-MIRPUR empowers citizens to report civic crises—such as water supply shortages, damaged roads, sewage blockages, and waste dumping—either by **typing in Urdu/English** or simply recording a **native Urdu voice note** directly in their browser.
 
 An autonomous **6-agent AI architecture** processes every report in real time, classifies the issue, retrieves relevant municipal bylaws, drafts formal bilingual petitions (English & Urdu), clusters geographic hotspots using Machine Learning, routes complaints to responsible authorities, and auto-escalates unresolved tickets.
 
@@ -34,7 +34,7 @@ An autonomous **6-agent AI architecture** processes every report in real time, c
                      │
                      ▼
   ┌────────────────────────────────────────────────────────┐
-  │         MirpurAwaz Multi-Agent AI Pipeline             │
+  │         AWAZ-e-MIRPUR Multi-Agent AI Pipeline          │
   │                                                        │
   │  [Agent 1: Intake & NLP Classification]                │
   │       Categorizes into water, road, garbage, sewage    │
@@ -152,7 +152,7 @@ The project is pre-configured with [render.yaml](render.yaml):
 1. Import the repository on [Vercel](https://vercel.com).
 2. Set root directory to `frontend`.
 3. Add Environment Variable:
-   - `NEXT_PUBLIC_API_URL`: Your deployed Render API URL (e.g. `https://mirpurawaz-api.onrender.com`).
+   - `NEXT_PUBLIC_API_URL`: Your deployed Render API URL (e.g. `https://awaz-e-mirpur-api.onrender.com`).
 4. Click **Deploy**.
 
 ---

@@ -26,7 +26,7 @@ export default function CitizenAccountPage() {
   return (
     <div className="space-y-8 max-w-xl">
       <div className="border-b border-stone-200 pb-6">
-        <p className="label-caps mb-2">MirpurAwaz</p>
+        <p className="label-caps mb-2">AWAZ-e-MIRPUR · آوازِ میرپور</p>
         <h1 className="text-2xl sm:text-3xl font-semibold text-stone-900">Account</h1>
         <p className="text-sm text-stone-600 mt-2">
           Profile for your citizen login. Reports and the map are under their own tabs.

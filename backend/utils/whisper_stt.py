@@ -3,54 +3,61 @@ import shutil
 import threading
 import wave
 from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-_model = None
-_model_lock = threading.Lock()
-_loaded_model_name: str | None = None
-
-if not shutil.which("ffmpeg"):
-    print(
-        "INFO: ffmpeg not on PATH. Browser recordings are sent as WAV from the frontend; "
-        "non-WAV uploads still use Whisper's decoder which may require ffmpeg."
-    )
-
-# Urdu-heavy civic context helps decoding (Roman Urdu / mixed included)
+# Urdu + English civic context helps OpenAI Whisper model decode accurately
 _WHISPER_PROMPT = (
-    "Mirpur City AJK civic complaint. Urdu: پانی، نالی، سڑک، کوڑا، سیوریج، شکایت۔ "
-    "English: water, sewage, road, garbage, drain, complaint, Mirpur."
+    "AWAZ-e-MIRPUR (آوازِ میرپور) civic complaint for Mirpur City, Azad Jammu & Kashmir (AJK). "
+    "Urdu vocabulary: پانی کی قلت، نالی بند، سیوریج، گٹر، سڑک کی ٹوٹ پھوٹ، کھڈے، کوڑا کرکٹ، بلدیہ میرپور، "
+    "محکمہ پبلک ہیلتھ، ایم ڈی اے، واپڈا، شکایت۔ "
+    "English vocabulary: water supply shortage, broken pipes, open sewage, drainage overflow, "
+    "potholes, garbage dumping, sanitation, Municipal Corporation Mirpur, MDA, PHE."
 )
 
 
-def _model_name() -> str:
-    return (os.getenv("WHISPER_MODEL") or "small").strip() or "small"
+def _transcribe_via_openai_api(file_path: str, language: Optional[str] = None) -> str:
+    """
+    Transcribes audio using OpenAI's Whisper-1 cloud API.
+    Supports Urdu, English, Roman Urdu, and bilingual audio.
+    """
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError(
+            "OPENAI_API_KEY is not configured in backend/.env. "
+            "Please add your OpenAI API key to backend/.env to transcribe audio."
+        )
 
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key)
 
-def _language_kw() -> str | None:
-    """Return Whisper language code, or None for auto-detect."""
-    raw = (os.getenv("WHISPER_LANGUAGE") or "ur").strip().lower()
-    if raw in ("", "auto", "none", "detect"):
-        return None
-    return raw
+    params = {
+        "model": "whisper-1",
+        "prompt": _WHISPER_PROMPT,
+        "temperature": 0.0,
+    }
 
+    # Only pass language if explicitly requested as 'ur' or 'en'.
+    # If None / 'auto' / empty, Whisper automatically detects language!
+    if language:
+        normalized_lang = language.strip().lower()
+        if normalized_lang in ("ur", "urdu"):
+            params["language"] = "ur"
+        elif normalized_lang in ("en", "english"):
+            params["language"] = "en"
 
-def _get_model():
-    global _model, _loaded_model_name
-    name = _model_name()
-    with _model_lock:
-        if _model is None or _loaded_model_name != name:
-            import whisper
-            print(f"Loading Whisper model '{name}' (first use or model changed)...")
-            _model = whisper.load_model(name)
-            _loaded_model_name = name
-            print("Whisper model loaded.")
-        return _model
+    with open(file_path, "rb") as audio_file:
+        params["file"] = audio_file
+        transcription = client.audio.transcriptions.create(**params)
+
+    text = (transcription.text or "").strip()
+    return text
 
 
 def _load_wav_mono_float32_16k(path: str):
-    """Load WAV without ffmpeg (PCM 8/16/32-bit, mono or stereo)."""
+    """Load WAV without ffmpeg for local processing if ever needed."""
     import numpy as np
 
     with wave.open(path, "rb") as wf:
@@ -82,62 +89,42 @@ def _load_wav_mono_float32_16k(path: str):
     return data.astype(np.float32)
 
 
-def _transcribe_kwargs():
-    lang = _language_kw()
-    use_fp16 = False
-    try:
-        import torch
-        use_fp16 = torch.cuda.is_available()
-    except Exception:
-        pass
-
-    kw: dict = {
-        "task": "transcribe",
-        "fp16": use_fp16,
-        "initial_prompt": os.getenv("WHISPER_INITIAL_PROMPT", _WHISPER_PROMPT),
-    }
-    if lang:
-        kw["language"] = lang
-    return kw
-
-
-def _transcribe_via_openai_api(file_path: str) -> str:
-    from openai import OpenAI
-    client = OpenAI()
-    with open(file_path, "rb") as audio_file:
-        transcription = client.audio.transcriptions.create(
-            model="whisper-1",
-            file=audio_file,
-            language=_language_kw() or "ur",
-            prompt=_WHISPER_PROMPT,
-        )
-    return transcription.text
-
-
-def transcribe_audio(file_path: str) -> str:
+def transcribe_audio(file_path: str, language: Optional[str] = None) -> str:
     """
-    Transcribe audio. First tries local Whisper; if torch/whisper local binary is not available,
-    it automatically falls back to OpenAI Whisper Cloud API.
+    Transcribes voice recording using OpenAI Whisper API (fast, handles both Urdu & English).
+    Falls back to local Whisper if installed.
     """
+    # 1. Primary: OpenAI Whisper-1 Cloud API (Industry Standard, fast, minimal server RAM)
     try:
-        model = _get_model()
-        lower = file_path.lower()
-        kw = _transcribe_kwargs()
+        text = _transcribe_via_openai_api(file_path, language=language)
+        if text:
+            return text
+        return "No speech detected in recording. Please record again or use text mode."
+    except Exception as e_api:
+        api_err_msg = str(e_api)
+        print(f"OpenAI Whisper API error: {api_err_msg}. Checking local whisper fallback...")
 
-        if lower.endswith(".wav"):
-            audio = _load_wav_mono_float32_16k(file_path)
-            result = model.transcribe(audio, **kw)
-        else:
-            result = model.transcribe(file_path, **kw)
-
-        text = (result.get("text") or "").strip()
-        if not text:
-            return "No speech detected. Try speaking closer to the mic or use text mode."
-        return text
-    except Exception as e_local:
-        print(f"Local Whisper unavailable or failed ({e_local}). Trying OpenAI Whisper Cloud API...")
+        # 2. Secondary fallback: Local whisper (if installed)
         try:
-            return _transcribe_via_openai_api(file_path)
-        except Exception as e_api:
-            print(f"Both local Whisper and OpenAI Cloud STT failed: {e_api}")
-            raise RuntimeError(f"Speech-to-text failed: {e_api}") from e_api
+            import whisper
+            model_name = (os.getenv("WHISPER_MODEL") or "base").strip()
+            model = whisper.load_model(model_name)
+            lower = file_path.lower()
+            kw = {"task": "transcribe", "fp16": False, "initial_prompt": _WHISPER_PROMPT}
+            if language in ("ur", "en"):
+                kw["language"] = language
+
+            if lower.endswith(".wav"):
+                audio = _load_wav_mono_float32_16k(file_path)
+                result = model.transcribe(audio, **kw)
+            else:
+                result = model.transcribe(file_path, **kw)
+
+            text = (result.get("text") or "").strip()
+            if text:
+                return text
+        except Exception:
+            pass
+
+        # If both fail, raise the clear message explaining the issue
+        raise RuntimeError(f"Transcription failed: {api_err_msg}") from e_api

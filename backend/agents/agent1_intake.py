@@ -25,7 +25,7 @@ def _run_with_openai_direct(text: str, model: str) -> dict:
     client = OpenAI()
 
     system_prompt = (
-        "You classify civic complaints for Mirpur City AJK (MirpurAwaz). "
+        "You classify civic complaints for Mirpur City AJK (AWAZ-e-MIRPUR / آوازِ میرپور). "
         "Text may be Urdu, English, or mixed.\n"
         "Categories:\n"
         "- water: water supply, pipes, taps, shortage (پانی، پائپ)\n"
@@ -63,7 +63,7 @@ def run(text: str) -> dict:
             "summary": "",
         }
 
-    print("Agent 1: Intake & Classification")
+    print("Agent 1: Intake & Classification (AWAZ-e-MIRPUR)")
     model = os.getenv("OPENAI_INTAKE_MODEL", "gpt-4o-mini").strip() or "gpt-4o-mini"
 
     # Try LangChain first if available; fall back gracefully to direct OpenAI SDK
@@ -77,7 +77,7 @@ def run(text: str) -> dict:
             [
                 (
                     "system",
-                    "You classify civic complaints for Mirpur City AJK (MirpurAwaz). "
+                    "You classify civic complaints for Mirpur City AJK (AWAZ-e-MIRPUR / آوازِ میرپور). "
                     "Text may be Urdu, English, or mixed.\n"
                     "Categories:\n"
                     "- water: water supply, pipes, taps, shortage (پانی، پائپ)\n"

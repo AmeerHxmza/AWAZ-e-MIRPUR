@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 CHROMA_DB_DIR = os.path.join(os.path.dirname(__file__), '..', 'chroma_db')
 DOCS_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'documents')
@@ -16,7 +19,7 @@ def get_retriever():
             from langchain_community.vectorstores import Chroma
             from langchain_openai import OpenAIEmbeddings
 
-            embeddings = OpenAIEmbeddings()
+            embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
             _vectorstore = Chroma(persist_directory=CHROMA_DB_DIR, embedding_function=embeddings)
             return _vectorstore.as_retriever(search_kwargs={"k": 3})
         except Exception as e:
