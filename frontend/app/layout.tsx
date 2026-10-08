@@ -19,8 +19,8 @@ const serif = IBM_Plex_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'AWAZ | Civic reporting for Islamabad',
-  description: 'AWAZ — report civic issues by text or voice, track status, and map concerns across Islamabad.',
+  title: 'MirpurAwaz | Civic reporting for Mirpur City AJK',
+  description: 'MirpurAwaz — report civic issues by text or voice, track status, and map concerns across Mirpur City AJK.',
 };
 
 export default function RootLayout({
@@ -40,7 +40,7 @@ export default function RootLayout({
           </main>
           <footer className="mt-auto border-t border-stone-200/90 bg-white/80 backdrop-blur-[2px]">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-7 text-center text-[13px] text-stone-500 leading-relaxed">
-              AWAZ — Islamabad civic reporting. For official correspondence, use routed authority contacts on your
+              MirpurAwaz — Mirpur City AJK civic reporting. For official correspondence, use routed authority contacts on your
               report.
             </div>
           </footer>

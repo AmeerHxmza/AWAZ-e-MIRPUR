@@ -33,8 +33,8 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 app = FastAPI(
-    title="AWAZ API",
-    description="AWAZ — civic voice & reporting for Islamabad (SDG 6 & 11)",
+    title="MirpurAwaz API",
+    description="MirpurAwaz — civic voice & reporting for Mirpur City AJK (SDG 6 & 11)",
     lifespan=lifespan
 )
 
@@ -56,7 +56,7 @@ app.include_router(heatmap_router, prefix="/heatmap", tags=["heatmap"])
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to AWAZ API"}
+    return {"message": "Welcome to MirpurAwaz API"}
 
 
 @app.get("/stats/public")

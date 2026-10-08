@@ -20,10 +20,10 @@ export const Navbar = () => {
               href="/"
               className="font-display text-[1.125rem] sm:text-[1.25rem] font-semibold text-stone-900 tracking-tight shrink-0 hover:text-[var(--app-navy)] transition-colors"
             >
-              AWAZ
+              MirpurAwaz
             </Link>
             <span className="hidden md:inline text-[11px] font-medium text-stone-400 uppercase tracking-[0.16em] truncate">
-              Islamabad · Civic voice &amp; reporting
+              Mirpur City AJK · Civic voice &amp; reporting
             </span>
           </div>
           <div className="flex items-center gap-1 sm:gap-5 flex-wrap sm:flex-nowrap justify-start sm:justify-end">

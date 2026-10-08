@@ -8,7 +8,7 @@ export default function Home() {
         <div className="hero-rule">
           <p className="label-caps mb-4">SDG 6 & 11 · Water & sustainable cities</p>
           <h1 className="text-[1.75rem] sm:text-[2.125rem] lg:text-[2.375rem] font-semibold text-stone-900 max-w-3xl">
-            AWAZ — civic reporting for Islamabad
+            MirpurAwaz — civic reporting for Mirpur City AJK
           </h1>
           <p className="mt-5 text-base sm:text-[1.0625rem] text-stone-600 max-w-2xl leading-[1.7]">
             Report water, sewage, roads, and sanitation issues by text or Urdu voice. Drafts are prepared, routed to the

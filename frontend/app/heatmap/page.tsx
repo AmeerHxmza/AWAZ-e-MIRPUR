@@ -197,7 +197,7 @@ export default function HeatmapPage() {
           key={publicIframeSrc}
           src={publicIframeSrc}
           className="w-full h-full min-h-[400px] border-0 bg-white"
-          title="AWAZ — civic issues heatmap"
+          title="MirpurAwaz — civic issues heatmap"
         />
       </div>
     </div>

@@ -20,18 +20,18 @@ def run(
     print("Agent 5: Authority Router & admin notifier")
 
     authority_map = {
-        "water": ("WASA Islamabad", "wasa@example.com"),
-        "sewage": ("WASA Islamabad", "wasa@example.com"),
-        "road": ("CDA Islamabad", "cda@example.com"),
-        "garbage": ("Local Government", "lg@example.com"),
-        "other": ("General Civic Authority", "info@example.com"),
+        "water": ("Public Health Engineering / Water Board Mirpur AJK", "water@mirpur.ajk.gov.pk"),
+        "sewage": ("Municipal Corporation Mirpur (MCM)", "sanitation@mirpur.ajk.gov.pk"),
+        "road": ("Mirpur Development Authority (MDA)", "roads@mda.ajk.gov.pk"),
+        "garbage": ("Municipal Corporation Mirpur (MCM)", "waste@mirpur.ajk.gov.pk"),
+        "other": ("Deputy Commissioner Office Mirpur AJK", "dc@mirpur.ajk.gov.pk"),
     }
 
     authority, authority_email = authority_map.get(category, authority_map["other"])
 
     admin_inbox = _strip_wrappers(os.getenv("ADMIN_NOTIFY_EMAIL", ""))
     id_line = f"Report ID: {complaint_id}\n" if complaint_id is not None else ""
-    subject = f"[AWAZ] Routed report #{complaint_id}" if complaint_id is not None else "[AWAZ] Routed report"
+    subject = f"[MirpurAwaz] Routed report #{complaint_id}" if complaint_id is not None else "[MirpurAwaz] Routed report"
     body = (
         f"{id_line}"
         f"Submitter: {submitter_name or '(unknown)'} <{user_email or '(none)'}>\n"

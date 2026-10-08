@@ -67,7 +67,7 @@ export default function ReportsPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-200 pb-6">
         <div>
-          <p className="label-caps mb-2">AWAZ</p>
+          <p className="label-caps mb-2">MirpurAwaz</p>
           <h1 className="text-2xl sm:text-3xl font-semibold text-stone-900">Reports</h1>
           <p className="text-sm text-stone-600 mt-2 max-w-2xl leading-relaxed">
             Your submitted issues and their status. Open a card for full detail, draft letters, and notifications.

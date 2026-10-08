@@ -3,7 +3,7 @@
 
 services:
   - type: web
-    name: awaz-api
+    name: mirpurawaz-api
     runtime: python
     plan: free
     rootDir: backend

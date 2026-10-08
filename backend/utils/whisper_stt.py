@@ -2,12 +2,8 @@ import os
 import shutil
 import threading
 import wave
-
-import numpy as np
-import torch
-import whisper
-from dotenv import load_dotenv
 from pathlib import Path
+from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
@@ -23,8 +19,8 @@ if not shutil.which("ffmpeg"):
 
 # Urdu-heavy civic context helps decoding (Roman Urdu / mixed included)
 _WHISPER_PROMPT = (
-    "Islamabad civic complaint. Urdu: پانی، نالی، سڑک، کوڑا، سیوریج، شکایت۔ "
-    "English: water, sewage, road, garbage, drain, complaint."
+    "Mirpur City AJK civic complaint. Urdu: پانی، نالی، سڑک، کوڑا، سیوریج، شکایت۔ "
+    "English: water, sewage, road, garbage, drain, complaint, Mirpur."
 )
 
 
@@ -45,6 +41,7 @@ def _get_model():
     name = _model_name()
     with _model_lock:
         if _model is None or _loaded_model_name != name:
+            import whisper
             print(f"Loading Whisper model '{name}' (first use or model changed)...")
             _model = whisper.load_model(name)
             _loaded_model_name = name
@@ -52,8 +49,10 @@ def _get_model():
         return _model
 
 
-def _load_wav_mono_float32_16k(path: str) -> np.ndarray:
+def _load_wav_mono_float32_16k(path: str):
     """Load WAV without ffmpeg (PCM 8/16/32-bit, mono or stereo)."""
+    import numpy as np
+
     with wave.open(path, "rb") as wf:
         sr = wf.getframerate()
         nch = wf.getnchannels()
@@ -85,7 +84,13 @@ def _load_wav_mono_float32_16k(path: str) -> np.ndarray:
 
 def _transcribe_kwargs():
     lang = _language_kw()
-    use_fp16 = torch.cuda.is_available()
+    use_fp16 = False
+    try:
+        import torch
+        use_fp16 = torch.cuda.is_available()
+    except Exception:
+        pass
+
     kw: dict = {
         "task": "transcribe",
         "fp16": use_fp16,
@@ -96,17 +101,29 @@ def _transcribe_kwargs():
     return kw
 
 
+def _transcribe_via_openai_api(file_path: str) -> str:
+    from openai import OpenAI
+    client = OpenAI()
+    with open(file_path, "rb") as audio_file:
+        transcription = client.audio.transcriptions.create(
+            model="whisper-1",
+            file=audio_file,
+            language=_language_kw() or "ur",
+            prompt=_WHISPER_PROMPT,
+        )
+    return transcription.text
+
+
 def transcribe_audio(file_path: str) -> str:
     """
-    Transcribe audio using OpenAI Whisper. WAV files are loaded in-process (no ffmpeg).
-    Default: model 'small', language 'ur' (override with WHISPER_MODEL / WHISPER_LANGUAGE in .env).
-    Set WHISPER_LANGUAGE=auto for full auto-detect (weaker for Urdu-only speech).
+    Transcribe audio. First tries local Whisper; if torch/whisper local binary is not available,
+    it automatically falls back to OpenAI Whisper Cloud API.
     """
-    model = _get_model()
-    lower = file_path.lower()
-    kw = _transcribe_kwargs()
-
     try:
+        model = _get_model()
+        lower = file_path.lower()
+        kw = _transcribe_kwargs()
+
         if lower.endswith(".wav"):
             audio = _load_wav_mono_float32_16k(file_path)
             result = model.transcribe(audio, **kw)
@@ -117,12 +134,10 @@ def transcribe_audio(file_path: str) -> str:
         if not text:
             return "No speech detected. Try speaking closer to the mic or use text mode."
         return text
-    except Exception as e:
-        msg = str(e).lower()
-        print(f"Error during transcription: {e}")
-        if "ffmpeg" in msg or "winerror 2" in msg or "no such file" in msg:
-            raise RuntimeError(
-                "Audio decoding failed. For recordings, use the in-app recorder (sends WAV), "
-                "or install ffmpeg: https://ffmpeg.org/download.html"
-            ) from e
-        raise
+    except Exception as e_local:
+        print(f"Local Whisper unavailable or failed ({e_local}). Trying OpenAI Whisper Cloud API...")
+        try:
+            return _transcribe_via_openai_api(file_path)
+        except Exception as e_api:
+            print(f"Both local Whisper and OpenAI Cloud STT failed: {e_api}")
+            raise RuntimeError(f"Speech-to-text failed: {e_api}") from e_api

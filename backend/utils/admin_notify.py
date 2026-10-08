@@ -149,7 +149,7 @@ def notify_admin_new_complaint(complaint_id: int) -> None:
         desc = (complaint.description or "").strip()
         preview = desc[:2000] + ("…" if len(desc) > 2000 else "")
 
-        subject = f"[AWAZ] New report #{complaint_id}"
+        subject = f"[MirpurAwaz] New report #{complaint_id}"
         body = (
             f"A new civic report was filed.\n\n"
             f"Report ID: {complaint_id}\n"

@@ -38,7 +38,12 @@ def embed_documents():
         print("No documents found in 'data/documents/'. Creating a sample document for RAG testing...")
         sample_doc_path = os.path.join(DOCS_DIR, "sample_wasa_rules.txt")
         with open(sample_doc_path, "w", encoding="utf-8") as f:
-            f.write("WASA Islamabad Regulations:\n1. All water leaks must be reported to WASA.\n2. Standard SLA for sewage fix is 48 hours.\n3. Contact: complaints@wasa.islamabad.pk\n")
+            f.write(
+                "Mirpur City AJK Regulations:\n"
+                "1. All water leaks must be reported to Public Health Engineering Mirpur.\n"
+                "2. Standard SLA for MCM sewage fix is 48 hours.\n"
+                "3. Contact: complaints@mcm.ajk.gov.pk\n"
+            )
         documents.extend(TextLoader(sample_doc_path).load())
 
     # Split documents into chunks

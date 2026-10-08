@@ -30,7 +30,7 @@ def run(db: Session):
             )
             send_email(
                 admin_inbox,
-                f"[AWAZ] Escalated report #{complaint.id}",
+                f"[MirpurAwaz] Escalated report #{complaint.id}",
                 f"Report #{complaint.id} was in 'submitted' for over 72 hours and is now marked escalated.\n\n"
                 f"Submitter: {submitter}\n"
                 f"Title: {complaint.title or '(none)'}\n"

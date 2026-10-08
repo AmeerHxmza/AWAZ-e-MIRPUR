@@ -1,7 +1,6 @@
 import os
 import smtplib
 from email.mime.text import MIMEText
-from twilio.rest import Client
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -44,6 +43,7 @@ def send_sms(to_phone: str, body: str):
         return False
         
     try:
+        from twilio.rest import Client
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         message = client.messages.create(
             body=body,

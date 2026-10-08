@@ -38,8 +38,8 @@ export default function SubmitComplaint() {
       },
       () => {
         setGeoStatus('denied');
-        setLatitude(33.6844);
-        setLongitude(73.0479);
+        setLatitude(33.1484);
+        setLongitude(73.7519);
       },
       { enableHighAccuracy: true, timeout: 12000, maximumAge: 60_000 },
     );
@@ -158,7 +158,7 @@ export default function SubmitComplaint() {
       case 'ok':
         return `Location captured (${latitude?.toFixed(4)}, ${longitude?.toFixed(4)}).`;
       case 'denied':
-        return 'Location permission denied—using Islamabad city center. You can still submit.';
+        return 'Location permission denied—using Mirpur City center. You can still submit.';
       case 'unavailable':
         return 'Geolocation not available—using default coordinates.';
       default:
